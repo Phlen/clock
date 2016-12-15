@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clock</title>
+  <link rel="stylesheet" type="text/css" href="./clock.css">
+</head>
+<script>
+  function setRootSize(){
+    var docWid = window.document.documentElement,
+        width = docWid.getBoundingClientRect().width,
+        fontSize = (width >= 640) ? 40 : width / 640 * 40;
+    docWid.style.fontSize = fontSize + 'px';
+  }
+
+  window.addEventListener('resize', function() {
+      setRootSize();
+  }, false);
+
+  setRootSize();
+</script>
+<body>
+  <div class="main">
+    <div class="clock">
+      <div class="wrapper">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand sec-hand"></div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+
+  // 获取时钟的秒针，分针，时针
+  const secHand = document.getElementsByClassName('sec-hand')[0],
+    minHand = document.getElementsByClassName('min-hand')[0],
+    hoursHand = document.getElementsByClassName('hour-hand')[0];
+
+  function setDate() {
+    let date = new Date();
+    // 获取当前秒,分，时
+    let sec = date.getSeconds(),
+        min = date.getMinutes(),
+        hours = date.getHours();
+
+    // 计算秒针，分针，时针的角度
+    // 为保证时钟从0点开始，时针，分针，秒针需要按顺时针转90度
+    // 秒针的偏移量为秒针转动偏移量，
+    // 分针偏移量为当前分针位置加秒针偏移量（每60秒转一小格）
+    // 时针的偏移量为当前小时位置加分针偏移量加秒针偏移量(没十二分针时针转到一小格)
+    let secDeg = (sec/60*360) + 90,
+        minDeg = ((min/60 + sec/60/60))*360 + 90,
+        hoursDeg = (hours/12 + min/60/12 + sec/60/60/12) * 360 + 90;
+
+    secHand.style.transform = `rotate(${secDeg}deg)`;
+    minHand.style.transform = `translateX(11%) rotate(${minDeg}deg)`;
+    hoursHand.style.transform = `translateX(24%) rotate(${hoursDeg}deg)`;
+  }
+  // setDate();
+  setInterval(setDate, 1000);
+</script>
+</html>
